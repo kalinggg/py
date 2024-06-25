@@ -1,0 +1,18 @@
+from flask import Flask, session
+
+app = Flask(__name__)
+# 设置一个默认的计数器值
+app.secret_key = 'your_secret_key'  # 用于安全地签名会话 cookie
+session_counter = 0
+
+@app.route('/')
+def counter():
+    global session_counter
+    if 'counter' in session:
+        session_counter = session['counter']
+    session_counter += 1
+    session['counter'] = session_counter
+    return f"Counter value: {session_counter}"
+
+if __name__ == '__main__':
+    app.run(debug=True)
