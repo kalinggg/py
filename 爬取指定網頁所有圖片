@@ -1,0 +1,61 @@
+import requests
+from bs4 import BeautifulSoup
+from pathlib import Path
+
+# 目标网页URL
+url = 'https://www.fonttopng.com/'
+
+# 发送HTTP GET请求
+response = requests.get(url)
+
+# 检查请求是否成功
+if response.status_code == 200:
+    # 使用BeautifulSoup解析HTML内容
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # 创建一个目录来保存图片
+    output_dir = Path('downloaded_images')
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # 查找所有的图片标签
+    images = soup.find_all('img')
+
+    download_count = 0  # 用于记录下载的图片数量
+    valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')  # 有效的图片扩展名
+
+    for img in images:
+        # 获取图片的URL
+        img_url = img.get('src')
+
+        # 确保图片URL是完整的
+        if not img_url.startswith(('http:', 'https:')):
+            img_url = url + img_url
+
+        # 检查URL是否指向一个图片
+        if any(img_url.lower().endswith(ext) for ext in valid_extensions):
+            # 发送请求下载图片
+            img_response = requests.get(img_url)
+
+            # 检查图片是否成功下载
+            if img_response.status_code == 200:
+                # 为图片创建一个文件名
+                file_name = img_url.split('/')[-1]
+                file_name = requests.utils.unquote(file_name)  # 解码URL编码
+
+                # 检查并替换文件名中的非法字符
+                for char in '<>:"/\\|?*':
+                    file_name = file_name.replace(char, '_')
+
+                # 保存图片到文件
+                file_path = output_dir / file_name
+                with open(file_path, 'wb') as f:
+                    f.write(img_response.content)
+                    print(f'图片已下载：{file_path}')
+                    download_count += 1  # 更新下载计数
+        else:
+            print(f'跳过非图片URL：{img_url}')
+
+    # 所有图片下载完成后打印提示
+    print(f'任务完成，共下载了{download_count}张图片。')
+else:
+    print(f'网页请求失败，状态码：{response.status_code}')
