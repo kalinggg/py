@@ -1,0 +1,60 @@
+from flask import Flask, request, render_template_string, redirect, url_for
+import csv
+import os
+
+app = Flask(__name__)
+
+# CSV 文件路径
+csv_file = 'messages.csv'
+
+# 确保 CSV 文件存在，如果不存在则创建并写入标题头
+if not os.path.exists(csv_file):
+    with open(csv_file, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Author', 'Text'])
+
+# HTML 模板
+HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Message Board</title>
+</head>
+<body>
+    <h1>Message Board</h1>
+    <ul>
+        {% for author, text in messages %}
+            <li><strong>{{ author }}</strong>: {{ text }}</li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="{{ url_for('add_message') }}">
+        <div>Author: <input type="text" name="author" required></div>
+        <div>Message: <input type="text" name="text" required></div>
+        <div><input type="submit" value="Add Message"></div>
+    </form>
+</body>
+</html>
+'''
+
+@app.route('/', methods=['GET'])
+def index():
+    messages = []
+    with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            messages.append(row)
+    return render_template_string(HTML_TEMPLATE, messages=messages)
+
+@app.route('/add', methods=['POST'])
+def add_message():
+    author = request.form.get('author')
+    text = request.form.get('text')
+    with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([author, text])
+    # 提交留言后重定向回主页
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
