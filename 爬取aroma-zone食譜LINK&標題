@@ -4,30 +4,48 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys  # 导入 Keys
 from openpyxl import Workbook
 
 # 使用 ChromeDriverManager 自动管理 ChromeDriver
 service = ChromeService(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service)
-import time
+
 try:
     # 打开目标网页
     driver.get("https://www.aroma-zone.com/recipes/recipe-list")
 
-    # 等待搜索结果加载
-    time.sleep(15)  # 使用显式等待代替固定时间可能更好
-
     # 创建 Excel 工作簿
     wb = Workbook()
     ws = wb.active
+    ws.append(["Title", "Link"])  # 写入标题行
 
-    # 抓取搜索结果的标题和链接
-    results = driver.find_elements(By.CSS_SELECTOR, "div.recipe-card")
-    for result in results:
-        title = result.find_element(By.CSS_SELECTOR, "span").text
-        link = result.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
-        ws.append([title, link])  # 将标题和链接写入 Excel
+
+    # 定义一个函数来抓取页面数据
+    def scrape_page_data():
+        results = driver.find_elements(By.CSS_SELECTOR, "div.recipe-card")
+        for result in results:
+            title_element = result.find_element(By.CSS_SELECTOR, "span")
+            link_element = result.find_element(By.CSS_SELECTOR, "a")
+            title = title_element.text
+            link = link_element.get_attribute("href")
+            ws.append([title, link])
+
+
+    # 抓取第一页数据
+    scrape_page_data()
+
+    # 循环跳转到第二页和第9页
+    for page in range(2, 10):  # 从2跳转到3
+        # 构造分页URL
+        driver.execute_script(f"window.location.href = 'https://www.aroma-zone.com/recipes/recipe-list?page={page}';")
+
+        # 等待页面加载完成
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div.recipe-card"))
+        )
+
+        # 抓取页面数据
+        scrape_page_data()
 
     # 保存 Excel 文件
     wb.save("search_aroma.xlsx")
