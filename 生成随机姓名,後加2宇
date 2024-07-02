@@ -1,0 +1,26 @@
+import random
+import string
+
+common_last_names = [
+    'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+    'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+]
+
+common_first_names = [
+    'James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles',
+    'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Mark', 'Donald', 'George', 'Steven', 'Edward', 'Brian',
+]
+
+def generate_random_name2(base="b", length=2):
+    random_part = random.choice(string.ascii_lowercase)
+    random_part = ''.join(random.choices(string.ascii_lowercase, k=length))
+    name2 = random_part + base
+    return name2
+
+def generate_random_name(last_names, first_names):
+    return f"{random.choice(last_names)} {random.choice(first_names)}"
+
+# 生成随机姓名
+myname2 = generate_random_name2()
+random_name = generate_random_name(common_last_names, common_first_names)
+print(random_name+myname2)
