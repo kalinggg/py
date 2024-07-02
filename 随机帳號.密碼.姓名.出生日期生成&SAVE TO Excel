@@ -1,0 +1,54 @@
+import random
+import string
+import pandas as pd
+from datetime import datetime, timedelta
+
+# 定义一个列表，包含一些常见的姓氏和名字
+last_names = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor']
+first_names = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Thomas', 'Charles', 'Joseph']
+
+def generate_random_name():
+    return random.choice(last_names) + ' ' + random.choice(first_names)
+
+def generate_adult_birthday():
+    # 计算18年前的日期
+    current_year = datetime.now().year
+    eighteen_years_ago = current_year - 18
+    # 生成18年前的随机日期
+    birthday = datetime(eighteen_years_ago, random.randint(1, 12), random.randint(1, 28))
+    return birthday.strftime('%Y-%m-%d')  # 格式化日期为YYYY-MM-DD
+
+def generate_random_account(base="kaling2024", length=8):
+    random_part = random.choice(string.ascii_lowercase)
+    random_part += ''.join(random.choices(string.ascii_lowercase + string.digits, k=length - 1))
+    account = random_part + base
+    return account
+
+# 定义生成随机密码的函数
+def generate_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(length))
+
+# 指定生成的账户数量
+number_of_accounts = 10
+
+# 生成账户和密码列表
+accounts_list = [generate_random_account() for _ in range(number_of_accounts)]
+# 确保generate_password函数定义在此处之前
+passwords = [generate_password(12) for _ in range(number_of_accounts)]
+names_list = [generate_random_name() for _ in range(number_of_accounts)]
+birthdays_list = [generate_adult_birthday() for _ in range(number_of_accounts)]
+
+# 创建DataFrame并存储到Excel
+df = pd.DataFrame({
+    'Account': accounts_list,
+    'Password': passwords,
+    'Name': names_list,
+    'Birthday': birthdays_list
+})
+
+# 存储到Excel文件
+excel_path = 'outlook_accounts.xlsx'
+df.to_excel(excel_path, index=False)
+
+print(f"帳號、密碼、姓名和出生日期已儲存至 {excel_path}")
