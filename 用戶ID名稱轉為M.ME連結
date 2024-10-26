@@ -1,0 +1,66 @@
+import re
+import pandas as pd
+
+
+# 读取TXT文件中的链接
+def read_links_from_txt(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        links = [line.strip() for line in file if line.strip()]  # 去除空白行和两端的空格
+    return links
+
+
+# 从链接中提取用户名或用户ID，并生成m.me链接
+def extract_and_create_m_me_link(url):
+    # 尝试提取用户ID
+    user_id_match = re.search(r"facebook\.com/profile\.php\?id=(\d+)", url)
+    if user_id_match:
+        return f"http://m.me/{user_id_match.group(1)}"
+
+    # 尝试提取用户名
+    username_match = re.search(r"facebook\.com\/([^\/\?]+)", url)
+    if username_match:
+        return f"http://m.me/{username_match.group(1)}"
+
+    return "无法提取"
+
+
+# 删除重复的链接
+def remove_duplicates(info_list):
+    unique_info = list(dict.fromkeys(info_list))  # 利用字典键的唯一性去除重复项
+    return unique_info
+
+
+# 将生成的m.me链接保存到Excel文件
+def save_to_excel(info_list, output_file):
+    df = pd.DataFrame(info_list, columns=['m.me Links'])
+    df.to_excel(output_file, index=False)
+
+
+# 生成报告
+def generate_report(extracted_count, unique_count, failed_count):
+    report = f"总共处理链接数: {extracted_count}\n"
+    report += f"成功提取并生成链接数量: {unique_count}\n"
+    report += f"无法提取数量: {failed_count}\n"
+    return report
+
+
+# 主函数
+def main():
+    input_file = 'links.txt'  # 假设你的TXT文件名为links.txt
+    output_file = 'm_me_links.xlsx'  # 输出的Excel文件名
+
+    links = read_links_from_txt(input_file)
+    info_list = [extract_and_create_m_me_link(link) for link in links]
+    unique_info_list = remove_duplicates(info_list)
+
+    extracted_count = len(info_list)
+    unique_count = len(unique_info_list)
+    failed_count = extracted_count - unique_count
+
+    save_to_excel(unique_info_list, output_file)
+    report = generate_report(extracted_count, unique_count, failed_count)
+    print(report)
+
+
+if __name__ == "__main__":
+    main()
