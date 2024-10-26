@@ -1,0 +1,75 @@
+import openpyxl
+import pyperclip
+import pyautogui
+import time
+# 打开Excel文件
+wb = openpyxl.load_workbook('m_me_links.xlsx')
+sheet = wb.active
+message = """
+🔥 金泰熙、宋慧喬御用彩妝師曹成雅最新底妝力作！*連宋慧喬都讚好* 👍🏻👍🏻
+韓國 CHOSUNGAH MEGA FIT升級潤澤版 - 無瑕雙頭粉底棒
+$188/支 少量現貨供應💗
+SPF50+ PA++++
+🔥 雙頭設計，本體自帶粉刷，打造完美妝容超迅速！
+🟠 2018上市至今，累積銷售突破600萬支！
+✨ 大面積粉底棒，迅速打造無瑕肌膚。
+✨ 使用後不浮白、超服貼，完美遮瑕猶如親膚。
+✨ 超長效、持續時間長達 120 小時！
+✨ 添加11種抗老保濕配方，上妝同時保養～
+✨ 完美的刷頭設計，使用起來零死角～
+规格：16g
+重量：73g
+色號：
+01 - 恰到好處的自然膚色 亮白
+02 -皮膚自然色
+🌸 ＃升級版滋潤度再升級
+這次的 Maga Fit 比起前代，保濕精華成分再增加 30% 以上，更適合秋冬乾冷時使用。兩頰中性偏乾肌，T字微出油的我故意沒做妝前保濕保養直接上妝，也好推不卡，有點像奶油融入肌膚的質感，一天下來也沒有什麼乾紋。
+🌸 ＃自然光澤就像原生美肌
+大家上底妝最在意的是什麼，我最在意上妝後是否帶有健康自然的光澤感，甚至會用高光添加光感。MEGA FIT 粉底棒很厲害的把高遮瑕度的底妝，
+保留了完美的光澤感，上完妝後不用再加工，就能擁有如原生美肌般的透亮底妝。
+🌸 ＃高遮瑕高持妝度
+MEGA FIT 粉底棒 輕輕推開後，雖然很輕盈不悶不厚重，但是卻能遮住泛紅約80%，習慣自然妝感的人，完全不用再另外遮瑕就能完美出門。
+通常有潤澤度的底妝也容易融妝，MEGA FIT 的卻能牢牢地服貼在臉上，我帶妝 9 小時＋吃熱氣蒸臉的拉麵後，也還有 70% 不會斑駁的妝。
+粉底棒附的刷頭也超級好用！毛是軟又帶有彈性的M型刷毛，貼合臉型又舒服，鼻翼、嘴角、眼角等細部範圍，也能輕鬆刷開粉底，且不會殘留刷痕。
+
+🏠歡迎大家網上inbox落單、網店落單、WhatsApp群落單、門市購買☺️😘
+
+🌟我地網站🌟⤵️
+https://111koreanfashion.com/ 
+
+😘➡️門市地址： 太子聯合廣場159號舖扶手電梯直上兩層🇰🇷
+
+最抵嘅優惠價錢😍😍✨可以加入我哋嘅⬇️⬇️⬇️
+https://chat.whatsapp.com/JW1Q27283FEDMmnT6iAIYu 
+瀏覽最新 最優惠產品💗🫶🏻快脆啲inbox我哋啦💗
+
+#Madeinkorea #韓國直送✈️ #韓國代購 #韓國連線 #111koreanfashion #Marchcat #太子聯合廣場159號鋪 #Newarrival #韓國女裝 #新款上架 #感謝主❤️ #耶蘇愛你 💗#祝福你 #粉底棒
+"""
+
+
+# 假设你的Excel文件有两列，第一列是链接，第二列是要发送的信息
+for row in range(2, sheet.max_row + 1):  # 从第二行开始，假设第一行是标题
+    link = sheet.cell(row=row, column=1).value
+    #message = str(sheet.cell(row=row, column=2).value)  # 确保message是字符串pyautogui只可打出英和數
+    # 打开浏览器并导航到链接
+    pyperclip.copy(message) # COPY MESSAGE IN BORAD
+    pyautogui.hotkey('ctrl','alt','c')  # 建立快捷鍵 打開網頁
+    time.sleep(2)  # 等待页面加载
+    pyautogui.click(x=1067, y=606 ,duration=2)
+    time.sleep(3)  # 等待页面加载
+    pyautogui.click(x=768, y=94, duration=2)
+    pyautogui.hotkey('shift')  # 轉英文
+    time.sleep(2)  # 等待页面加载
+    pyautogui.write(link)  # 输入链接
+    time.sleep(2)  # 等待页面加载
+    pyautogui.press('enter')  # 按回车键
+    time.sleep(2)  # 等待页面加载
+    pyautogui.click(x=1410, y=986, duration=3)
+    pyautogui.click(x=1410, y=986, duration=3)
+    pyautogui.hotkey('ctrl', 'v')
+    pyautogui.press('enter')  # 按回车键
+    time.sleep(20)  # 等待页面加载
+
+
+# 记得关闭工作簿
+wb.close()
