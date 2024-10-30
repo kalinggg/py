@@ -1,0 +1,13 @@
+安装chromedriver_autoinstaller：
+您可以通过pip命令安装chromedriver_autoinstaller：
+
+pip install chromedriver-autoinstaller
+
+from selenium import webdriver
+import chromedriver_autoinstaller
+
+chromedriver_autoinstaller.install()  # 检测Chrome浏览器版本并下载相应版本的ChromeDriver
+driver = webdriver.Chrome()  # 使用Selenium启动Chrome浏览器
+driver.get('https://www.example.com')  # 访问网页
+# ... 执行其他操作 ...
+driver.quit()  # 关闭浏览器
